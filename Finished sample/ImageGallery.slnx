@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ImageGallery.API\ImageGallery.API.csproj" />
+  <Project Path="ImageGallery.Authorization/ImageGallery.Authorization.csproj" Id="46dadc8c-d532-45ce-b727-87967572dc28" />
+  <Project Path="ImageGallery.BFF/ImageGallery.BFF.csproj" />
+  <Project Path="ImageGallery.Model\ImageGallery.Model.csproj" />
+  <Project Path="Marvin.IDP/Marvin.IDP.csproj" />
+</Solution>

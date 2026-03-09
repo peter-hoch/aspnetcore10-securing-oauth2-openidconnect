@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ImageGallery.API\ImageGallery.API.csproj" />
+  <Project Path="ImageGallery.Client\ImageGallery.Client.csproj" />
+  <Project Path="ImageGallery.Model\ImageGallery.Model.csproj" />
+  <Project Path="Marvin.IDP/Marvin.IDP.csproj" />
+</Solution>
