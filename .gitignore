@@ -416,3 +416,4 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/Starter files/ImageGallery.API/ImageGallery.db
