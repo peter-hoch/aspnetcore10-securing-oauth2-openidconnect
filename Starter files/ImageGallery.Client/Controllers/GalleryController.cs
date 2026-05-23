@@ -4,15 +4,16 @@ using ImageGallery.Model;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc; 
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ImageGallery.Client.Controllers;
 
-public class GalleryController(IHttpClientFactory httpClientFactory,
-    ITokenInformationLogger tokenInformationLogger) : Controller
+[Authorize]
+public class GalleryController(IHttpClientFactory httpClientFactory, ITokenInformationLogger tokenInformationLogger) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        // log token information
+        // log token information - only for demonstration NOT for production
         await tokenInformationLogger.Log();
 
         var httpClient = httpClientFactory.CreateClient("APIClient");

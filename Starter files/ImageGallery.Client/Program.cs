@@ -1,4 +1,6 @@
 using ImageGallery.Client.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,24 @@ builder.Services.AddHttpClient("APIClient", client =>
     client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
 });
 
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+    {
+        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.Authority = "https://localhost:5001";
+        options.ClientId = "imagegalleryclient";
+        options.ResponseType = "code";
+        //options.CallbackPath = new PathString("...");
+        options.Scope.Add(("openid"));  // default value
+        options.Scope.Add("profile");  // default value
+        options.SaveTokens = true;
+        options.ClientSecret = "secret";
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,6 +54,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
