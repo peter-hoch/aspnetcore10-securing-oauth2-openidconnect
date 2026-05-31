@@ -34,6 +34,7 @@ builder.Services.AddAuthentication(options =>
         options.ClientId = "imagegalleryclient";
         options.ResponseType = "code";
         //options.CallbackPath = new PathString("...");
+        //options.SignedOutCallbackPath = new PathString("...");  // the callback for the IPD sign out - the default is host:port/signout-callback-oidc AND in or in config section Marvin.IDP\Config.cs
         options.Scope.Add(("openid"));  // default value
         options.Scope.Add("profile");  // default value
         options.SaveTokens = true;

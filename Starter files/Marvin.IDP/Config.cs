@@ -58,10 +58,10 @@ public static class Config
                         "https://localhost:7184/signin-oidc"
                     },        
                     RequireConsent = false,
-                    //PostLogoutRedirectUris =
-                    //{
-                    //    "https://localhost:7184/signout-callback-oidc"
-                    //},
+                    PostLogoutRedirectUris =
+                    {
+                        "https://localhost:7184/signout-callback-oidc"
+                    },
                     ClientSecrets =
                     {
                         new Secret("secret".Sha256())
