@@ -1,3 +1,4 @@
+using Duende.AccessTokenManagement.OpenIdConnect;
 using ImageGallery.Client.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,15 +16,16 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITokenInformationLogger, TokenInformationLogger>();
+builder.Services.AddOpenIdConnectAccessTokenManagement();
 
 // create an HttpClient used for accessing the API
 builder.Services.AddHttpClient("APIClient", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ImageGalleryAPIRoot"] ?? 
-        throw new InvalidOperationException("Configuration setting ImageGalleryAPIRoot is missing."));
+    client.BaseAddress = new Uri(builder.Configuration["ImageGalleryAPIRoot"] ??
+                                 throw new InvalidOperationException("Configuration setting ImageGalleryAPIRoot is missing."));
     client.DefaultRequestHeaders.Clear();
     client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-});
+}).AddUserAccessTokenHandler();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -44,6 +46,8 @@ builder.Services.AddAuthentication(options =>
         options.Scope.Add(("openid"));  // default value
         options.Scope.Add("profile");  // default value
         options.Scope.Add("roles");  
+        // add scope
+        options.Scope.Add("imagegalleryapi.fullaccess");
         options.SaveTokens = true;
         options.ClientSecret = "secret";
         // get additional claims from the UerInfoEndpoint
