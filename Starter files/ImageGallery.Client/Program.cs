@@ -1,6 +1,9 @@
 using ImageGallery.Client.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,9 +40,28 @@ builder.Services.AddAuthentication(options =>
         //options.SignedOutCallbackPath = new PathString("...");  // the callback for the IPD sign out - the default is host:port/signout-callback-oidc AND in or in config section Marvin.IDP\Config.cs
         options.Scope.Add(("openid"));  // default value
         options.Scope.Add("profile");  // default value
+        options.Scope.Add("roles");  
         options.SaveTokens = true;
         options.ClientSecret = "secret";
+        // get additional claims from the UerInfoEndpoint
+        options.GetClaimsFromUserInfoEndpoint = true;
+        // do not map claims to old standards
+        options.MapInboundClaims = false;
+        // add the to the claims
+        options.ClaimActions.Remove("aud");
+        // remove claims
+        options.ClaimActions.DeleteClaims("sid", "idp");
+        // and add a claim mapping
+        options.ClaimActions.MapJsonKey("role", "role");
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            NameClaimType = "given_name",
+            RoleClaimType = "role"
+        };
     });
+
+// do not map claims to old standards - to handle multiple IDPs
+//JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var app = builder.Build();
 
