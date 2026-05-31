@@ -1,5 +1,6 @@
 using ImageGallery.API.DbContexts;
 using ImageGallery.API.Services;
+using ImageGallery.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -23,6 +24,10 @@ builder.Services.AddScoped<IGalleryRepository, GalleryRepository>();
 // register AutoMapper-related services
 builder.Services.AddAutoMapper(config => { },
     AppDomain.CurrentDomain.GetAssemblies());
+
+// add support for policies
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("UserCanAddImage", AuthorizationPolicies.CanAddImage());
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

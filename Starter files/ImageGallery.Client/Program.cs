@@ -1,4 +1,5 @@
 using Duende.AccessTokenManagement.OpenIdConnect;
+using ImageGallery.Authorization;
 using ImageGallery.Client.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -17,6 +18,10 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITokenInformationLogger, TokenInformationLogger>();
 builder.Services.AddOpenIdConnectAccessTokenManagement();
+
+// add support for policies
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("UserCanAddImage", AuthorizationPolicies.CanAddImage());
 
 // create an HttpClient used for accessing the API
 builder.Services.AddHttpClient("APIClient", client =>
@@ -45,9 +50,11 @@ builder.Services.AddAuthentication(options =>
         //options.SignedOutCallbackPath = new PathString("...");  // the callback for the IPD sign out - the default is host:port/signout-callback-oidc AND in or in config section Marvin.IDP\Config.cs
         options.Scope.Add(("openid"));  // default value
         options.Scope.Add("profile");  // default value
-        options.Scope.Add("roles");  
+        options.Scope.Add("roles");
         // add scope
         options.Scope.Add("imagegalleryapi.fullaccess");
+        // add scope for country
+        options.Scope.Add("country");
         options.SaveTokens = true;
         options.ClientSecret = "secret";
         // get additional claims from the UerInfoEndpoint
@@ -60,6 +67,8 @@ builder.Services.AddAuthentication(options =>
         options.ClaimActions.DeleteClaims("sid", "idp");
         // and add a claim mapping
         options.ClaimActions.MapJsonKey("role", "role");
+        // and add a claim mapping
+        options.ClaimActions.MapUniqueJsonKey("country", "country");
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             NameClaimType = "given_name",

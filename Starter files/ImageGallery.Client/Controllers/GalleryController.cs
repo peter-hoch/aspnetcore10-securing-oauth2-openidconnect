@@ -118,7 +118,7 @@ public class GalleryController(IHttpClientFactory httpClientFactory, ITokenInfor
         return RedirectToAction("Index");
     }
 
-    [Authorize(Roles = "PayingUser")]
+    [Authorize(Policy = "UserCanAddImage")]
     public IActionResult AddImage()
     {
         return View();
@@ -126,7 +126,7 @@ public class GalleryController(IHttpClientFactory httpClientFactory, ITokenInfor
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "PayingUser")]
+    [Authorize(Policy = "UserCanAddImage")]
     public async Task<IActionResult> AddImage(AddImageViewModel addImageViewModel)
     {
         if (!ModelState.IsValid)

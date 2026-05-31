@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="ImageGallery.API\ImageGallery.API.csproj" />
+  <Project Path="ImageGallery.Autorization/ImageGallery.Authorization.csproj" Id="98fb53d2-00bc-4e5a-a3d0-bca79f3c5812" />
   <Project Path="ImageGallery.Client\ImageGallery.Client.csproj" />
   <Project Path="ImageGallery.Model\ImageGallery.Model.csproj" />
   <Project Path="Marvin.IDP/Marvin.IDP.csproj" />
