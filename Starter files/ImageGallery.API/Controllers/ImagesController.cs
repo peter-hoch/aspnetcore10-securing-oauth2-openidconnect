@@ -18,8 +18,10 @@ public class ImagesController(
     [HttpGet()]
     public async Task<ActionResult<IEnumerable<Image>>> GetImages()
     {
+        var ownerId = (User.Claims.FirstOrDefault(c => c.Type == "sub"))?.Value ?? throw new Exception("user identifier is missing from token.");
+
         // get from repo
-        var imagesFromRepo = await galleryRepository.GetImagesAsync();
+        var imagesFromRepo = await galleryRepository.GetImagesAsync(ownerId);
 
         // map to model
         var imagesToReturn = mapper.Map<IEnumerable<Image>>(imagesFromRepo);
@@ -30,7 +32,14 @@ public class ImagesController(
 
     [HttpGet("{id}", Name = "GetImage")]
     public async Task<ActionResult<Image>> GetImage(Guid id)
-    {          
+    {
+        var ownerId = (User.Claims.FirstOrDefault(c => c.Type == "sub"))?.Value ?? throw new Exception("user identifier is missing from token.");
+
+        if (await galleryRepository.IsImageOwnerAsync(id, ownerId))
+        {
+            return Forbid();
+        }
+
         var imageFromRepo = await galleryRepository.GetImageAsync(id);
 
         if (imageFromRepo == null)
