@@ -15,5 +15,10 @@ namespace ImageGallery.Client.Controllers
             // redirects to the identity provider end session endpoint
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
