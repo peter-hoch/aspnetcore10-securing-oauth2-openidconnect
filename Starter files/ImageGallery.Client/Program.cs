@@ -52,7 +52,7 @@ builder.Services.AddAuthentication(options =>
         options.Scope.Add("profile");  // default value
         options.Scope.Add("roles");
         // add scope
-        options.Scope.Add("imagegalleryapi.fullaccess");
+        options.Scope.Add("imagegalleryapi.write");
         // add scope for country
         options.Scope.Add("country");
         options.SaveTokens = true;

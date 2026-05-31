@@ -27,7 +27,11 @@ builder.Services.AddAutoMapper(config => { },
 
 // add support for policies
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("UserCanAddImage", AuthorizationPolicies.CanAddImage());
+    .AddPolicy("UserCanAddImage", AuthorizationPolicies.CanAddImage())
+    .AddPolicy("ClientApplicationCanWrite", policyBuilder =>
+    {
+        policyBuilder.RequireClaim("scope", "imagegallery.write");
+    });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
