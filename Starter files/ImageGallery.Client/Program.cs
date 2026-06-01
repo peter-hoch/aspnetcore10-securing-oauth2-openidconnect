@@ -30,7 +30,7 @@ builder.Services.AddHttpClient("APIClient", client =>
                                  throw new InvalidOperationException("Configuration setting ImageGalleryAPIRoot is missing."));
     client.DefaultRequestHeaders.Clear();
     client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-}).AddUserAccessTokenHandler();
+}).AddUserAccessTokenHandler();  // this handler will automatically handle everything for Refresh Tokens
 
 builder.Services.AddAuthentication(options =>
     {
@@ -39,6 +39,7 @@ builder.Services.AddAuthentication(options =>
     }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.AccessDeniedPath = "/Authentication/AccessDenied";
+        options.Events.OnSigningOut = async e => { await e.HttpContext.RevokeRefreshTokenAsync(); }; // add this event handler for revocation
     })
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
     {
@@ -55,6 +56,7 @@ builder.Services.AddAuthentication(options =>
         options.Scope.Add("imagegalleryapi.write");
         // add scope for country
         options.Scope.Add("country");
+        options.Scope.Add("offline_access"); // for Refresh Tokens - the middleware will request a refresh token and saves it
         options.SaveTokens = true;
         options.ClientSecret = "secret";
         // get additional claims from the UerInfoEndpoint

@@ -43,6 +43,7 @@ public static class Config
                     ClientName = "Image Gallery",
                     ClientId = "imagegalleryclient",
                     AllowedGrantTypes = GrantTypes.Code,
+                    AccessTokenLifetime = 120,  // set lifetime to 120s to test the Refresh Token mechanism
                     AllowedScopes =
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -66,7 +67,7 @@ public static class Config
                     {
                         new Secret("secret".Sha256())
                     },
-                    AllowOfflineAccess = true,
+                    AllowOfflineAccess = true, // scope offline access is supported (for Refresh Tokens)
                     UpdateAccessTokenClaimsOnRefresh = true            
                 }
             ];

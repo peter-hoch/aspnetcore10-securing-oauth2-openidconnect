@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Duende.AccessTokenManagement.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,9 @@ namespace ImageGallery.Client.Controllers
         [Authorize]
         public async Task Logout()
         {
+            // revoke the refresh token - it is possible here but we have a better solution
+            // await HttpContext.RevokeRefreshTokenAsync();
+
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             // redirects to the identity provider end session endpoint
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
