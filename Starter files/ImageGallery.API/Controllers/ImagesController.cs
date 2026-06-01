@@ -31,11 +31,12 @@ public class ImagesController(
     }
 
     [HttpGet("{id}", Name = "GetImage")]
+    [Authorize(Policy="MustOwnImage")]
     public async Task<ActionResult<Image>> GetImage(Guid id)
     {
         var ownerId = (User.Claims.FirstOrDefault(c => c.Type == "sub"))?.Value ?? throw new Exception("user identifier is missing from token.");
 
-        if (await galleryRepository.IsImageOwnerAsync(id, ownerId))
+        if (!await galleryRepository.IsImageOwnerAsync(id, ownerId))
         {
             return Forbid();
         }
@@ -54,6 +55,7 @@ public class ImagesController(
     [HttpPost()]
     [Authorize(Policy = "UserCanAddImage")]
     [Authorize(Policy = "ClientApplicationCanWrite")]
+    [Authorize(Policy = "MustOwnImage")]
     public async Task<ActionResult<Image>> CreateImage([FromBody] ImageForCreation imageForCreation)
     {
         // Automapper maps only the Title in our configuration
@@ -99,6 +101,7 @@ public class ImagesController(
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "MustOwnImage")]
     public async Task<IActionResult> DeleteImage(Guid id)
     {            
         var imageFromRepo = await galleryRepository.GetImageAsync(id);
@@ -116,8 +119,7 @@ public class ImagesController(
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateImage(Guid id, 
-        [FromBody] ImageForUpdate imageForUpdate)
+    public async Task<IActionResult> UpdateImage(Guid id, [FromBody] ImageForUpdate imageForUpdate)
     {
         var imageFromRepo = await galleryRepository.GetImageAsync(id);
         if (imageFromRepo == null)

@@ -1,7 +1,9 @@
+using ImageGallery.API.Authorization;
 using ImageGallery.API.DbContexts;
 using ImageGallery.API.Services;
 using ImageGallery.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,7 +33,18 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("ClientApplicationCanWrite", policyBuilder =>
     {
         policyBuilder.RequireClaim("scope", "imagegallery.write");
+    })
+    .AddPolicy("MustOwnImage", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.AddRequirements(new MustOwnImageRequirement());
     });
+
+// make the context accessor available
+builder.Services.AddHttpContextAccessor();
+
+// register the handler
+builder.Services.AddScoped<IAuthorizationHandler, MustOwnImageHandler>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

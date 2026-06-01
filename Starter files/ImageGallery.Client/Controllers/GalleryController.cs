@@ -39,12 +39,9 @@ public class GalleryController(IHttpClientFactory httpClientFactory, ITokenInfor
 
         var httpClient = httpClientFactory.CreateClient("APIClient");
 
-        var request = new HttpRequestMessage(
-            HttpMethod.Get,
-            $"/api/images/{id}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/images/{id}");
 
-        var response = await httpClient.SendAsync(
-            request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+        var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
 
